@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeagueBook — Rec League &amp; Small Club Admin Book</title>
+<style>
+:root{
+  --ink:#1c2733; --muted:#5b6b7a; --line:#d8e0e8; --bg:#f4f7f9; --card:#fff;
+  --accent:#14683c; --accent2:#0e4d2c; --warn:#b3261e; --amber:#8a6d00;
+  --soft:#e8f3ec; --softblue:#e9f0f7;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.45}
+header{background:var(--accent2);color:#fff;padding:12px 16px}
+header h1{margin:0;font-size:20px;letter-spacing:.2px}
+header .sub{font-size:13px;opacity:.85;margin-top:2px}
+nav.tabs{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:2px;padding:4px 6px}
+nav.tabs button{flex:1 1 auto;min-height:44px;border:0;background:transparent;font-size:14px;font-weight:600;color:var(--muted);border-radius:8px;cursor:pointer;padding:8px 6px}
+nav.tabs button.active{background:var(--soft);color:var(--accent2)}
+main{max-width:1080px;margin:0 auto;padding:14px 12px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:14px}
+.card h2{margin:0 0 8px;font-size:17px}
+.card h3{margin:14px 0 6px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.stat{background:var(--softblue);border-radius:10px;padding:10px 12px}
+.stat .n{font-size:22px;font-weight:700}
+.stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.4px;color:var(--muted)}
+tr.tot td{font-weight:700;border-top:2px solid var(--ink);border-bottom:none}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+label{display:block;font-size:13px;font-weight:600;margin:8px 0 3px}
+input,select,textarea{width:100%;min-height:42px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px;background:#fff;color:var(--ink)}
+textarea{min-height:64px}
+input[type=checkbox]{width:22px;height:22px;min-height:22px;vertical-align:middle}
+.frow{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+button.btn{min-height:44px;padding:9px 16px;border-radius:9px;border:1px solid var(--accent);background:var(--accent);color:#fff;font-size:14px;font-weight:700;cursor:pointer}
+button.btn.ghost{background:#fff;color:var(--accent2)}
+button.btn.danger{background:#fff;color:var(--warn);border-color:var(--warn)}
+button.btn.small{min-height:38px;padding:5px 10px;font-size:13px;min-height:40px;}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.pill{display:inline-block;padding:1px 8px;border-radius:20px;font-size:12px;font-weight:700}
+.pill.ok{background:var(--soft);color:var(--accent2)}
+.pill.due{background:#fdecea;color:var(--warn)}
+.pill.warn{background:#fff6da;color:var(--amber)}
+.pill.info{background:var(--softblue);color:#24507c}
+.muted{color:var(--muted);font-size:13px}
+.err{background:#fdecea;color:var(--warn);border-radius:8px;padding:8px 10px;font-size:14px;margin-top:8px;display:none}
+.notebar{background:#fff6da;border:1px solid #ecd27a;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:14px}
+.empty{color:var(--muted);padding:12px 4px}
+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600;min-height:32px}
+#printArea{display:none}
+@media (max-width:640px){
+  .grid{grid-template-columns:1fr 1fr}
+  table{font-size:13px}
+  th,td{padding:6px 5px}
+  header h1{font-size:18px}
+}
+@media print{
+  header,nav.tabs,main,.noprint{display:none !important}
+  #printArea{display:block !important;color:#000;font-size:12.5px}
+  #printArea h1{font-size:19px;margin:0 0 2px}
+  #printArea h2{font-size:15px;margin:14px 0 4px}
+  #printArea table{width:100%;border-collapse:collapse}
+  #printArea th,#printArea td{border-bottom:1px solid #bbb;padding:5px 6px;text-align:left}
+  #printArea .num{text-align:right}
+  #printArea tr{break-inside:avoid}
+  #printArea .muted{color:#444}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏆 LeagueBook</h1>
+  <div class="sub" id="hdrSub">Rec League &amp; Small Club Admin Book</div>
+</header>
+<nav class="tabs noprint" id="tabBar">
+  <button data-tab="dash" class="active">Dashboard</button>
+  <button data-tab="reg">Registration</button>
+  <button data-tab="sched">Schedule</button>
+  <button data-tab="stand">Standings</button>
+  <button data-tab="refs">Referees &amp; Pay</button>
+  <button data-tab="money">Money &amp; Close-Out</button>
+  <button data-tab="settings">Settings &amp; Help</button>
+</nav>
+<main id="app"></main>
+<div id="printArea"></div>
+
+<script>
+"use strict";
+/* ================= LeagueBook core ================= */
+var LS_KEY = "leaguebook_v1";
+
+function uid(){ return "x" + Date.now().toString(36) + Math.random().toString(36).slice(2,8); }
+function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); }
+function num(v){ var n = parseFloat(v); return isFinite(n) ? n : 0; }
+function money(n){ n = num(n); var neg = n < 0; n = Math.abs(n); return (neg?"-$":"$") + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,","); }
+function todayStr(){ var d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
+function fmtDate(ds){ if(!ds) return ""; var p=String(ds).split("-"); if(p.length!==3) return esc(ds); var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]; return months[parseInt(p[1],10)-1]+" "+parseInt(p[2],10)+", "+p[0]; }
+
+function defaultSettings(){
+  return { leagueName:"", sport:"", season:"", feeDefault:85, ptsWin:3, ptsTie:1, ptsLoss:0 };
+}
+function blankState(){
+  return { settings: defaultSettings(), teams:[], players:[], games:[], refs:[], refJobs:[], money:[] };
+}
+
+/* ---------- core math (pure; also used by QA via window.LB) ---------- */
+function playerBalance(p){ return num(p.fee) - num(p.paid); }
+function regTotals(st){
+  var charged=0, collected=0, outstanding=0, credited=0, unpaidCount=0, waiverMissing=0;
+  st.players.forEach(function(p){
+    charged += num(p.fee); collected += num(p.paid);
+    var b = playerBalance(p);
+    if(b > 0){ outstanding += b; unpaidCount++; } else if(b < 0){ credited += -b; }
+    if(!p.waiver) waiverMissing++;
+  });
+  return { charged:charged, collected:collected, outstanding:outstanding, credited:credited,
+           unpaidCount:unpaidCount, waiverMissing:waiverMissing, playerCount:st.players.length };
+}
+function gameResult(g, st){
+  /* Returns null if the game doesn't count, else {homeId,awayId,hs,as} with effective scores. */
+  if(g.status === "scheduled" || g.status === "cancelled") return null;
+  var hs = (g.homeScore===""||g.homeScore==null) ? null : num(g.homeScore);
+  var as = (g.awayScore===""||g.awayScore==null) ? null : num(g.awayScore);
+  if(g.status === "forfeit-home"){ if(hs===null||as===null){ hs=0; as=1; } }
+  else if(g.status === "forfeit-away"){ if(hs===null||as===null){ hs=1; as=0; } }
+  else { if(hs===null||as===null) return null; }
+  return { homeId:g.homeId, awayId:g.awayId, hs:hs, as:as };
+}
+function computeStandings(st){
+  var table = {};
+  st.teams.forEach(function(t){ table[t.id] = { teamId:t.id, name:t.name, gp:0, w:0, l:0, t:0, pf:0, pa:0, pts:0 }; });
+  st.games.forEach(function(g){
+    var r = gameResult(g, st); if(!r) return;
+    var H = table[r.homeId], A = table[r.awayId]; if(!H || !A) return;
+    H.gp++; A.gp++; H.pf += r.hs; H.pa += r.as; A.pf += r.as; A.pa += r.hs;
+    if(r.hs > r.as){ H.w++; A.l++; H.pts += num(st.settings.ptsWin); A.pts += num(st.settings.ptsLoss); }
+    else if(r.hs < r.as){ A.w++; H.l++; A.pts += num(st.settings.ptsWin); H.pts += num(st.settings.ptsLoss); }
+    else { H.t++; A.t++; H.pts += num(st.settings.ptsTie); A.pts += num(st.settings.ptsTie); }
+  });
+  var rows = Object.keys(table).map(function(k){ var r=table[k]; r.diff = r.pf - r.pa; return r; });
+  rows.sort(function(a,b){
+    if(b.pts !== a.pts) return b.pts - a.pts;
+    if(b.diff !== a.diff) return b.diff - a.diff;
+    if(b.pf !== a.pf) return b.pf - a.pf;
+    return a.name < b.name ? -1 : (a.name > b.name ? 1 : 0);
+  });
+  return rows;
+}
+function refTotals(st){
+  var fees=0, paidOut=0;
+  st.refJobs.forEach(function(j){ fees += num(j.fee); paidOut += Math.min(num(j.paidAmt), num(j.fee)); });
+  var byRef = {};
+  st.refs.forEach(function(r){ byRef[r.id] = { refId:r.id, name:r.name, jobs:0, fees:0, paid:0, owed:0 }; });
+  st.refJobs.forEach(function(j){
+    var e = byRef[j.refId]; if(!e) return;
+    e.jobs++; e.fees += num(j.fee); e.paid += Math.min(num(j.paidAmt), num(j.fee)); e.owed = e.fees - e.paid;
+  });
+  return { fees:fees, paidOut:paidOut, owed:fees-paidOut,
+           byRef:Object.keys(byRef).map(function(k){return byRef[k];}) };
+}
+function moneyTotals(st){
+  var income=0, expenses=0;
+  st.money.forEach(function(m){ if(m.type==="income") income += num(m.amount); else expenses += num(m.amount); });
+  return { income:income, expenses:expenses, net:income-expenses };
+}
+function seasonSummary(st){
+  var reg = regTotals(st), refs = refTotals(st), mon = moneyTotals(st);
+  var cashIn = reg.collected + mon.income;
+  var cashOut = mon.expenses + refs.paidOut;
+  return { reg:reg, refs:refs, money:mon,
+    cashIn:cashIn, cashOut:cashOut, cashNet:cashIn-cashOut,
+    netPosition:(cashIn-cashOut) + reg.outstanding - refs.owed };
+}
+function teamName(st, id){ var t = st.teams.filter(function(x){return x.id===id;})[0]; return t ? t.name : "(deleted team)"; }
+function refName(st, id){ var r = st.refs.filter(function(x){return x.id===id;})[0]; return r ? r.name : "(deleted ref)"; }
+
+var LB = { computeStandings:computeStandings, regTotals:regTotals, refTotals:refTotals,
+           moneyTotals:moneyTotals, seasonSummary:seasonSummary, playerBalance:playerBalance,
+           gameResult:gameResult, blankState:blankState, defaultSettings:defaultSettings };
+if(typeof window !== "undefined") window.LB = LB;
+</script>
+<script>
+"use strict";
+/* ================= LeagueBook app ================= */
+var S = null;
+var curTab = "dash";
+var regFilter = "all";
+var editPlayerId = null, editGameId = null;
+var editTeamId = null, editRefJobId = null;
+var payPlayerId = null, payJobId = null;
+var lastRegTeam = "";
+var lastGameCtx = { date:"", time:"", location:"" };
+
+function save(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(S)); }catch(e){} }
+function load(){
+  try{
+    var raw = localStorage.getItem(LS_KEY);
+    if(raw){ var st = JSON.parse(raw); if(st && st.settings && Array.isArray(st.teams)){ S = st; return; } }
+  }catch(e){}
+  S = blankState(); seedDemo(); save();
+}
+function teamById(id){ return S.teams.filter(function(t){return t.id===id;})[0]; }
+
+/* ---------- demo data ---------- */
+function seedDemo(){
+  S.settings = { leagueName:"Riverbend Youth Soccer League", sport:"Soccer", season:"Spring 2026", feeDefault:85, ptsWin:3, ptsTie:1, ptsLoss:0 };
+  var T = {};
+  ["Hawks","Wolves","Comets","Rapids","Strikers","Titans"].forEach(function(n,i){
+    var t = { id:"demo-team-"+i, name:n, coach:"", color:"", demo:true }; S.teams.push(t); T[n]=t.id;
+  });
+  var players = [
+    ["Maya Chen","Hawks",85,85,true],["Liam Ortiz","Hawks",85,50,true],["Sofia Reyes","Hawks",85,85,true],
+    ["Noah Brooks","Wolves",85,85,true],["Ava Lindqvist","Wolves",85,0,false],["Ethan Wright","Wolves",85,85,true],
+    ["Ruby Nakamura","Comets",85,60,true],["Owen Doyle","Comets",85,85,true],
+    ["Isla Fontaine","Rapids",85,85,true],["Caleb Moss","Rapids",85,25,false],
+    ["Nora Whitfield","Strikers",85,85,true],["Jonah Fields","Strikers",85,85,true],
+    ["Amara Haddad","Titans",85,40,true],["Leo Brennan","Titans",85,85,true]
+  ];
+  players.forEach(function(p,i){
+    S.players.push({ id:"demo-player-"+i, name:p[0], teamId:T[p[1]], contact:"", phone:"", email:"",
+      fee:p[2], paid:p[3], waiver:p[4], notes:"", demo:true });
+  });
+  var games = [
+    ["2026-04-04","Hawks","Wolves",4,2,"played"],["2026-04-04","Comets","Rapids",3,3,"played"],
+    ["2026-04-11","Strikers","Titans",1,0,"played"],["2026-04-11","Hawks","Comets",2,2,"played"],
+    ["2026-04-18","Wolves","Strikers",5,1,"played"],["2026-04-18","Rapids","Titans",3,0,"played"],
+    ["2026-04-25","Hawks","Rapids",3,1,"played"],["2026-04-25","Wolves","Comets",2,2,"played"],
+    ["2026-05-02","Titans","Hawks","","","scheduled"],["2026-05-02","Strikers","Comets","","","scheduled"]
+  ];
+  games.forEach(function(g,i){
+    S.games.push({ id:"demo-game-"+i, date:g[0], time:"10:00 AM", location:"Field "+((i%3)+1),
+      homeId:T[g[1]], awayId:T[g[2]], homeScore:g[3], awayScore:g[4], status:g[5], notes:"", demo:true });
+  });
+  var R = {};
+  ["Dan Whitaker","Priya Shah","Marcus Bell"].forEach(function(n,i){
+    var r = { id:"demo-ref-"+i, name:n, phone:"", demo:true }; S.refs.push(r); R[n]=r.id;
+  });
+  var jobs = [
+    ["2026-04-04","Dan Whitaker","Hawks vs Wolves — center",30,30],
+    ["2026-04-04","Priya Shah","Comets vs Rapids — center",30,30],
+    ["2026-04-11","Marcus Bell","Strikers vs Titans — center",25,0],
+    ["2026-04-18","Dan Whitaker","Wolves vs Strikers — center",30,0]
+  ];
+  jobs.forEach(function(j,i){
+    S.refJobs.push({ id:"demo-job-"+i, date:j[0], refId:R[j[1]], desc:j[2], fee:j[3], paidAmt:j[4], demo:true });
+  });
+  var mon = [
+    ["2026-03-15","income","Sponsor","Riverbend Bank — season sponsor",500],
+    ["2026-04-12","income","Fundraiser","Spring car-wash fundraiser",275],
+    ["2026-04-18","income","Concessions","Concession stand — Apr 18",180],
+    ["2026-03-20","expense","Equipment","Game balls (10) and cones",220],
+    ["2026-04-01","expense","Field rental","City fields — April",150],
+    ["2026-04-22","expense","Trophies","End-of-season trophies (deposit)",95]
+  ];
+  mon.forEach(function(m,i){
+    S.money.push({ id:"demo-money-"+i, date:m[0], type:m[1], category:m[2], desc:m[3], amount:m[4], demo:true });
+  });
+}
+
+/* ---------- rendering shell ---------- */
+function render(){
+  var sub = S.settings;
+  document.getElementById("hdrSub").textContent =
+    (sub.leagueName || "Rec League & Small Club Admin Book") + (sub.season ? " — " + sub.season : "");
+  var app = document.getElementById("app");
+  if(curTab==="dash") app.innerHTML = viewDash();
+  else if(curTab==="reg") app.innerHTML = viewReg();
+  else if(curTab==="sched") app.innerHTML = viewSched();
+  else if(curTab==="stand") app.innerHTML = viewStand();
+  else if(curTab==="refs") app.innerHTML = viewRefs();
+  else if(curTab==="money") app.innerHTML = viewMoney();
+  else if(curTab==="settings") app.innerHTML = viewSettings();
+  var btns = document.querySelectorAll("#tabBar button");
+  btns.forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab")===curTab); });
+}
+function switchTab(t){ curTab = t; editPlayerId = null; editGameId = null; editTeamId = null; editRefJobId = null; payPlayerId = null; payJobId = null; render(); window.scrollTo(0,0); }
+document.getElementById("tabBar").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if(b) switchTab(b.getAttribute("data-tab"));
+});
+function err(id, msg){ var e = document.getElementById(id); if(e){ e.textContent = msg; e.style.display = msg ? "block" : "none"; } }
+
+/* ---------- shared fragments ---------- */
+function teamOptions(sel, includeBlank){
+  var h = includeBlank ? '<option value="">— choose team —</option>' : "";
+  S.teams.forEach(function(t){ h += '<option value="'+t.id+'"'+(t.id===sel?" selected":"")+'>'+esc(t.name)+'</option>'; });
+  return h;
+}
+function refOptions(sel, includeBlank){
+  var h = includeBlank ? '<option value="">— choose referee —</option>' : "";
+  S.refs.forEach(function(r){ h += '<option value="'+r.id+'"'+(r.id===sel?" selected":"")+'>'+esc(r.name)+'</option>'; });
+  return h;
+}
+
+/* ================= Dashboard ================= */
+function viewDash(){
+  var reg = regTotals(S), refs = refTotals(S), sum = seasonSummary(S);
+  var played = S.games.filter(function(g){ return gameResult(g,S); }).length;
+  var upcoming = S.games.filter(function(g){ return g.status==="scheduled"; }).length;
+  var rows = computeStandings(S).slice(0,3);
+  var h = '<div class="card"><h2>Season at a glance</h2><div class="grid">';
+  h += '<div class="stat"><div class="n">'+S.teams.length+'</div><div class="l">Teams</div></div>';
+  h += '<div class="stat"><div class="n">'+reg.playerCount+'</div><div class="l">Players</div></div>';
+  h += '<div class="stat"><div class="n">'+money(reg.collected)+'</div><div class="l">Registration collected</div></div>';
+  h += '<div class="stat"><div class="n">'+money(reg.outstanding)+'</div><div class="l">Registration still owed</div></div>';
+  h += '<div class="stat"><div class="n">'+played+' / '+upcoming+'</div><div class="l">Games played / to play</div></div>';
+  h += '<div class="stat"><div class="n">'+money(refs.owed)+'</div><div class="l">Ref pay still owed</div></div>';
+  h += '<div class="stat"><div class="n">'+money(sum.cashNet)+'</div><div class="l">Cash in minus cash out</div></div>';
+  h += '<div class="stat"><div class="n">'+money(sum.netPosition)+'</div><div class="l">Net position (incl. owed)</div></div>';
+  h += '</div></div>';
+  if(reg.unpaidCount || reg.waiverMissing){
+    h += '<div class="notebar">⚠️ <strong>'+reg.unpaidCount+'</strong> player'+(reg.unpaidCount===1?"":"s")+' still owe'+(reg.unpaidCount===1?"s":"")+' registration money';
+    if(reg.waiverMissing) h += ' · <strong>'+reg.waiverMissing+'</strong> waiver'+(reg.waiverMissing===1?"":"s")+' not on file';
+    h += '. See the Registration tab.</div>';
+  }
+  h += '<div class="card"><h2>Top of the table</h2>';
+  if(rows.length && rows.some(function(r){return r.gp>0;})){
+    h += '<table><tr><th>Team</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">Pts</th></tr>';
+    rows.forEach(function(r){ h += '<tr><td>'+esc(r.name)+'</td><td class="num">'+r.w+'</td><td class="num">'+r.l+'</td><td class="num">'+r.t+'</td><td class="num"><strong>'+r.pts+'</strong></td></tr>'; });
+    h += '</table><p class="muted">Full table, tiebreakers and a printable version are on the Standings tab.</p>';
+  } else {
+    h += '<p class="empty">No results yet. Add teams and players under Registration, then games under Schedule.</p>';
+  }
+  h += '</div>';
+  h += '<div class="card"><h2>What LeagueBook does</h2><p class="muted">One file keeps the whole season: who registered and who still owes, the schedule and scores, standings that add themselves up, what the referees are owed, and the sponsor / concession / expense money — ending in a clean season close-out summary for the board. Everything lives on this device. No account, no subscription, no internet needed. LeagueBook is the league\'s own admin and money book — it does not message parents or take card payments (see Settings &amp; Help).</p></div>';
+  return h;
+}
+
+/* ================= Registration ================= */
+function viewReg(){
+  var reg = regTotals(S);
+  var h = '<div class="card"><h2>Teams</h2>';
+  if(S.teams.length){
+    h += '<table><tr><th>Team</th><th>Coach</th><th class="num">Players</th><th></th></tr>';
+    S.teams.forEach(function(t){
+      var n = S.players.filter(function(p){return p.teamId===t.id;}).length;
+      h += '<tr><td><strong>'+esc(t.name)+'</strong>'+(t.color?' <span class="muted">('+esc(t.color)+')</span>':'')+'</td><td>'+esc(t.coach||"")+'</td><td class="num">'+n+'</td>'+
+        '<td class="num"><button class="btn ghost small" onclick="editTeam(\''+t.id+'\')">Edit</button> <button class="btn danger small" onclick="delTeam(\''+t.id+'\')">Delete</button></td></tr>';
+    });
+    h += '</table>';
+  } else h += '<p class="empty">No teams yet — add your first team below.</p>';
+  var et = editTeamId ? S.teams.filter(function(t){return t.id===editTeamId;})[0] : null;
+  h += '<h3>'+(et?"Edit team":"Add a team")+'</h3><div class="frow">'+
+    '<div><label>Team name</label><input id="tm_name" placeholder="e.g. Hawks" value="'+(et?esc(et.name):"")+'"></div>'+
+    '<div><label>Coach (optional)</label><input id="tm_coach" value="'+(et?esc(et.coach||""):"")+'"></div>'+
+    '<div><label>Color (optional)</label><input id="tm_color" placeholder="e.g. Red" value="'+(et?esc(et.color||""):"")+'"></div></div>'+
+    '<div class="err" id="tm_err"></div><div class="btnrow"><button class="btn" onclick="saveTeam()">'+(et?"Save changes":"Add team")+'</button>'+
+    (et?'<button class="btn ghost" onclick="cancelEditTeam()">Cancel edit</button>':"")+'</div></div>';
+
+  h += '<div class="card"><h2>Players &amp; registration money</h2><div class="grid">';
+  h += '<div class="stat"><div class="n">'+money(reg.charged)+'</div><div class="l">Fees charged</div></div>';
+  h += '<div class="stat"><div class="n">'+money(reg.collected)+'</div><div class="l">Collected</div></div>';
+  h += '<div class="stat"><div class="n">'+money(reg.outstanding)+'</div><div class="l">Still owed</div></div>';
+  h += '<div class="stat"><div class="n">'+reg.waiverMissing+'</div><div class="l">Waivers missing</div></div></div>';
+  h += '<div class="frow" style="margin-top:10px"><div><label>Show</label><select id="reg_filter" onchange="setRegFilter(this.value)">'+
+    '<option value="all"'+(regFilter==="all"?" selected":"")+'>All players</option>'+
+    '<option value="owed"'+(regFilter==="owed"?" selected":"")+'>Only players who still owe</option>'+
+    S.teams.map(function(t){ return '<option value="'+t.id+'"'+(regFilter===t.id?" selected":"")+'>'+esc(t.name)+'</option>'; }).join("")+
+    '</select></div></div>';
+  var list = S.players.filter(function(p){
+    if(regFilter==="all") return true;
+    if(regFilter==="owed") return playerBalance(p) > 0;
+    return p.teamId===regFilter;
+  });
+  if(list.length){
+    h += '<table><tr><th>Player</th><th>Team</th><th class="num">Fee</th><th class="num">Paid</th><th class="num">Balance</th><th>Waiver</th><th></th></tr>';
+    list.forEach(function(p){
+      var b = playerBalance(p);
+      h += '<tr><td><strong>'+esc(p.name)+'</strong>'+(p.contact?'<br><span class="muted">'+esc(p.contact)+'</span>':'')+(p.payLog?'<br><span class="muted">Payments: '+esc(p.payLog)+'</span>':'')+'</td>'+
+        '<td>'+esc(teamName(S,p.teamId))+'</td><td class="num">'+money(p.fee)+'</td><td class="num">'+money(p.paid)+'</td>'+
+        '<td class="num">'+(b>0?'<span class="pill due">'+money(b)+' owed</span>':(b<0?'<span class="pill info">'+money(-b)+' credit</span>':'<span class="pill ok">Paid up</span>'))+'</td>'+
+        '<td>'+(p.waiver?'<span class="pill ok">On file</span>':'<span class="pill warn">Missing</span>')+'</td>'+
+        '<td class="num"><button class="btn small" onclick="startPlayerPayment(\''+p.id+'\')">+ Payment</button> <button class="btn ghost small" onclick="editPlayer(\''+p.id+'\')">Edit</button> <button class="btn danger small" onclick="delPlayer(\''+p.id+'\')">Delete</button></td></tr>';
+    });
+    h += '</table>';
+  } else h += '<p class="empty">No players match this view yet.</p>';
+  var pp = payPlayerId ? S.players.filter(function(p){return p.id===payPlayerId;})[0] : null;
+  if(pp){
+    var pb = playerBalance(pp);
+    h += '<h3>Add a payment — '+esc(pp.name)+'</h3>'+
+      '<p class="muted">Fee '+money(pp.fee)+' · already paid '+money(pp.paid)+' · '+(pb>0?money(pb)+' still owed':(pb<0?money(-pb)+' credit on file':'paid in full'))+'. The amount below is <strong>added</strong> to what\'s already recorded — no hand-adding.</p>'+
+      '<div class="frow"><div><label>Payment amount ($)</label><input inputmode="decimal" id="pay_amt" type="number" min="0" step="0.01" value="'+(pb>0?pb:"")+'"></div>'+
+      '<div><label>Date (optional)</label><input id="pay_date" type="date" value="'+todayStr()+'"></div></div>'+
+      '<div class="err" id="pay_err"></div><div class="btnrow"><button class="btn" onclick="applyPlayerPayment()">Add payment</button>'+
+      '<button class="btn ghost" onclick="cancelPlayerPayment()">Cancel</button></div>';
+  }
+  h += '<div class="btnrow"><button class="btn ghost" onclick="printDues()">🖨 Print who-still-owes list</button></div></div>';
+
+  var ep = editPlayerId ? S.players.filter(function(p){return p.id===editPlayerId;})[0] : null;
+  h += '<div class="card"><h2>'+(ep?"Edit player":"Add a player")+'</h2><div class="frow">'+
+    '<div><label>Player name</label><input id="pl_name" value="'+(ep?esc(ep.name):"")+'"></div>'+
+    '<div><label>Team</label><select id="pl_team">'+teamOptions(ep?ep.teamId:lastRegTeam, true)+'</select></div>'+
+    '<div><label>Parent / guardian (optional)</label><input id="pl_contact" value="'+(ep?esc(ep.contact||""):"")+'"></div>'+
+    '<div><label>Phone (optional)</label><input id="pl_phone" value="'+(ep?esc(ep.phone||""):"")+'"></div>'+
+    '<div><label>Email (optional)</label><input id="pl_email" value="'+(ep?esc(ep.email||""):"")+'"></div>'+
+    '<div><label>Registration fee ($)</label><input inputmode="decimal" id="pl_fee" type="number" min="0" step="0.01" value="'+(ep?ep.fee:S.settings.feeDefault)+'"></div>'+
+    '<div><label>Amount paid so far ($)</label><input inputmode="decimal" id="pl_paid" type="number" min="0" step="0.01" value="'+(ep?ep.paid:0)+'"></div>'+
+    '<div><label>Notes (optional)</label><input id="pl_notes" value="'+(ep?esc(ep.notes||""):"")+'"></div></div>'+
+    '<label style="margin-top:10px"><input type="checkbox" id="pl_waiver"'+(ep&&ep.waiver?" checked":"")+' style="width:22px"> Waiver / release form on file</label>'+
+    '<div class="err" id="pl_err"></div><div class="btnrow"><button class="btn" onclick="savePlayer()">'+(ep?"Save changes":"Add player")+'</button>'+
+    (ep?'<button class="btn ghost" onclick="cancelEditPlayer()">Cancel edit</button>':"")+'</div></div>';
+  return h;
+}
+function setRegFilter(v){ regFilter = v; render(); }
+function saveTeam(){
+  var name = document.getElementById("tm_name").value.trim();
+  if(!name){ err("tm_err","Give the team a name first."); return; }
+  var coach = document.getElementById("tm_coach").value.trim();
+  var color = document.getElementById("tm_color").value.trim();
+  if(editTeamId){
+    var t = S.teams.filter(function(x){return x.id===editTeamId;})[0];
+    if(t){ t.name = name; t.coach = coach; t.color = color; }
+    editTeamId = null;
+  } else {
+    S.teams.push({ id:uid(), name:name, coach:coach, color:color });
+  }
+  save(); render();
+}
+function editTeam(id){ editTeamId = id; render(); }
+function cancelEditTeam(){ editTeamId = null; render(); }
+function delTeam(id){
+  var n = S.players.filter(function(p){return p.teamId===id;}).length;
+  if(n > 0){ alert("This team still has "+n+" player(s). Move or delete them first."); return; }
+  if(!confirm("Delete this team? Its games stay on the schedule but will show as a deleted team.")) return;
+  S.teams = S.teams.filter(function(t){return t.id!==id;});
+  if(editTeamId===id) editTeamId = null;
+  save(); render();
+}
+function savePlayer(){
+  var name = document.getElementById("pl_name").value.trim();
+  var teamId = document.getElementById("pl_team").value;
+  var fee = num(document.getElementById("pl_fee").value);
+  var paid = num(document.getElementById("pl_paid").value);
+  if(!name){ err("pl_err","The player needs a name."); return; }
+  if(!teamId){ err("pl_err","Pick the player's team."); return; }
+  if(fee < 0 || paid < 0){ err("pl_err","Fee and paid amounts can't be negative."); return; }
+  var data = { name:name, teamId:teamId,
+    contact:document.getElementById("pl_contact").value.trim(),
+    phone:document.getElementById("pl_phone").value.trim(),
+    email:document.getElementById("pl_email").value.trim(),
+    fee:fee, paid:paid, notes:document.getElementById("pl_notes").value.trim(),
+    waiver:document.getElementById("pl_waiver").checked };
+  if(editPlayerId){
+    var p = S.players.filter(function(x){return x.id===editPlayerId;})[0];
+    if(p){ Object.keys(data).forEach(function(k){ p[k]=data[k]; }); }
+    editPlayerId = null;
+  } else {
+    data.id = uid(); S.players.push(data);
+    lastRegTeam = teamId; /* registration night: keep the team picked for the next player */
+  }
+  save(); render();
+}
+function startPlayerPayment(id){ payPlayerId = id; render(); }
+function cancelPlayerPayment(){ payPlayerId = null; render(); }
+function applyPlayerPayment(){
+  var p = S.players.filter(function(x){return x.id===payPlayerId;})[0];
+  if(!p){ payPlayerId = null; render(); return; }
+  var amt = num(document.getElementById("pay_amt").value);
+  if(!(amt > 0)){ err("pay_err","Enter the payment amount — it gets added to the "+money(p.paid)+" already recorded."); return; }
+  var date = document.getElementById("pay_date").value;
+  p.paid = Math.round((num(p.paid) + amt) * 100) / 100;
+  if(date) p.payLog = ((p.payLog || "") ? p.payLog + " · " : "") + money(amt) + " on " + fmtDate(date);
+  payPlayerId = null;
+  save(); render();
+}
+function editPlayer(id){ editPlayerId = id; render(); window.scrollTo(0, document.body.scrollHeight); }
+function cancelEditPlayer(){ editPlayerId = null; render(); }
+function delPlayer(id){
+  if(!confirm("Delete this player and their registration record?")) return;
+  S.players = S.players.filter(function(p){return p.id!==id;});
+  if(editPlayerId===id) editPlayerId = null;
+  if(payPlayerId===id) payPlayerId = null;
+  save(); render();
+}
+
+/* ================= Schedule ================= */
+var STATUS_LABEL = { scheduled:"Scheduled", played:"Played", "forfeit-home":"Forfeit — home team", "forfeit-away":"Forfeit — away team", cancelled:"Cancelled" };
+function viewSched(){
+  var h = '<div class="card"><h2>Schedule &amp; scores</h2>';
+  var games = S.games.slice().sort(function(a,b){ return (a.date+a.time) < (b.date+b.time) ? -1 : 1; });
+  if(games.length){
+    h += '<table><tr><th>Date</th><th>Matchup</th><th>Score</th><th>Status</th><th></th></tr>';
+    games.forEach(function(g){
+      var r = gameResult(g,S);
+      var score = r ? (r.hs+" – "+r.as) : "—";
+      h += '<tr><td>'+fmtDate(g.date)+(g.time?'<br><span class="muted">'+esc(g.time)+'</span>':'')+(g.location?'<br><span class="muted">'+esc(g.location)+'</span>':'')+'</td>'+
+        '<td><strong>'+esc(teamName(S,g.homeId))+'</strong> vs <strong>'+esc(teamName(S,g.awayId))+'</strong>'+(g.notes?'<br><span class="muted">'+esc(g.notes)+'</span>':'')+'</td>'+
+        '<td class="num"><strong>'+score+'</strong></td>'+
+        '<td><span class="pill '+(g.status==="played"?"ok":(g.status==="scheduled"?"info":"warn"))+'">'+STATUS_LABEL[g.status]+'</span></td>'+
+        '<td class="num"><button class="btn ghost small" onclick="editGame(\''+g.id+'\')">Edit</button> <button class="btn danger small" onclick="delGame(\''+g.id+'\')">Delete</button></td></tr>';
+    });
+    h += '</table>';
+  } else h += '<p class="empty">No games yet — add the first game below.</p>';
+  h += '<div class="btnrow"><button class="btn ghost" onclick="printSchedule()">🖨 Print schedule</button></div></div>';
+
+  var eg = editGameId ? S.games.filter(function(g){return g.id===editGameId;})[0] : null;
+  h += '<div class="card"><h2>'+(eg?"Edit game":"Add a game")+'</h2><div class="frow">'+
+    '<div><label>Date</label><input id="gm_date" type="date" value="'+(eg?eg.date:(lastGameCtx.date||todayStr()))+'"></div>'+
+    '<div><label>Time (optional)</label><input id="gm_time" value="'+(eg?esc(eg.time||""):esc(lastGameCtx.time||""))+'" placeholder="10:00 AM"></div>'+
+    '<div><label>Field / location (optional)</label><input id="gm_loc" value="'+(eg?esc(eg.location||""):esc(lastGameCtx.location||""))+'"></div>'+
+    '<div><label>Home team</label><select id="gm_home">'+teamOptions(eg?eg.homeId:"", true)+'</select></div>'+
+    '<div><label>Away team</label><select id="gm_away">'+teamOptions(eg?eg.awayId:"", true)+'</select></div>'+
+    '<div><label>Status</label><select id="gm_status">'+
+      ["scheduled","played","forfeit-home","forfeit-away","cancelled"].map(function(s){ return '<option value="'+s+'"'+(eg&&eg.status===s?" selected":"")+'>'+STATUS_LABEL[s]+'</option>'; }).join("")+
+    '</select></div>'+
+    '<div><label>Home score</label><input inputmode="decimal" id="gm_hs" type="number" min="0" step="1" value="'+(eg&&eg.homeScore!==""&&eg.homeScore!=null?eg.homeScore:"")+'"></div>'+
+    '<div><label>Away score</label><input inputmode="decimal" id="gm_as" type="number" min="0" step="1" value="'+(eg&&eg.awayScore!==""&&eg.awayScore!=null?eg.awayScore:"")+'"></div>'+
+    '<div><label>Notes (optional)</label><input id="gm_notes" value="'+(eg?esc(eg.notes||""):"")+'"></div></div>'+
+    '<p class="muted">Leave scores blank for games not yet played. A forfeit with no score entered counts as a 1–0 win for the other team in the standings.</p>'+
+    '<div class="err" id="gm_err"></div><div class="btnrow"><button class="btn" onclick="saveGame()">'+(eg?"Save changes":"Add game")+'</button>'+
+    (eg?'<button class="btn ghost" onclick="cancelEditGame()">Cancel edit</button>':"")+'</div></div>';
+  return h;
+}
+function saveGame(){
+  var date = document.getElementById("gm_date").value;
+  var homeId = document.getElementById("gm_home").value;
+  var awayId = document.getElementById("gm_away").value;
+  var status = document.getElementById("gm_status").value;
+  var hsRaw = document.getElementById("gm_hs").value;
+  var asRaw = document.getElementById("gm_as").value;
+  if(!date){ err("gm_err","Pick a date for the game."); return; }
+  if(!homeId || !awayId){ err("gm_err","Pick both teams."); return; }
+  if(homeId === awayId){ err("gm_err","Home and away teams can't be the same team."); return; }
+  if(status==="played" && (hsRaw==="" || asRaw==="")){ err("gm_err","A played game needs both scores. For a forfeit, choose the forfeit status instead."); return; }
+  if((hsRaw!=="" && num(hsRaw) < 0) || (asRaw!=="" && num(asRaw) < 0)){ err("gm_err","Scores can't be negative."); return; }
+  var data = { date:date, time:document.getElementById("gm_time").value.trim(),
+    location:document.getElementById("gm_loc").value.trim(),
+    homeId:homeId, awayId:awayId, status:status,
+    homeScore: hsRaw==="" ? "" : num(hsRaw), awayScore: asRaw==="" ? "" : num(asRaw),
+    notes:document.getElementById("gm_notes").value.trim() };
+  if(editGameId){
+    var g = S.games.filter(function(x){return x.id===editGameId;})[0];
+    if(g){ Object.keys(data).forEach(function(k){ g[k]=data[k]; }); }
+    editGameId = null;
+  } else {
+    data.id = uid(); S.games.push(data);
+    lastGameCtx = { date:data.date, time:data.time, location:data.location }; /* same round: keep date/time/field for the next game */
+  }
+  save(); render();
+}
+function editGame(id){ editGameId = id; render(); window.scrollTo(0, document.body.scrollHeight); }
+function cancelEditGame(){ editGameId = null; render(); }
+function delGame(id){
+  if(!confirm("Delete this game?")) return;
+  S.games = S.games.filter(function(g){return g.id!==id;});
+  if(editGameId===id) editGameId = null;
+  save(); render();
+}
+
+/* ================= Standings ================= */
+function viewStand(){
+  var rows = computeStandings(S);
+  var h = '<div class="card"><h2>Standings</h2>';
+  h += '<p class="muted">Points: <strong>'+num(S.settings.ptsWin)+'</strong> for a win · <strong>'+num(S.settings.ptsTie)+'</strong> for a tie · <strong>'+num(S.settings.ptsLoss)+'</strong> for a loss (change in Settings). Ties in points are broken by score difference, then by total scored, then by team name. Forfeits with no score entered count 1–0.</p>';
+  if(rows.length){
+    h += '<table><tr><th>#</th><th>Team</th><th class="num">GP</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">For</th><th class="num">Against</th><th class="num">Diff</th><th class="num">Pts</th></tr>';
+    rows.forEach(function(r,i){
+      h += '<tr><td>'+(i+1)+'</td><td><strong>'+esc(r.name)+'</strong></td><td class="num">'+r.gp+'</td><td class="num">'+r.w+'</td><td class="num">'+r.l+'</td><td class="num">'+r.t+'</td><td class="num">'+r.pf+'</td><td class="num">'+r.pa+'</td><td class="num">'+(r.diff>0?"+":"")+r.diff+'</td><td class="num"><strong>'+r.pts+'</strong></td></tr>';
+    });
+    h += '</table>';
+  } else h += '<p class="empty">Add teams first — standings appear here once results are entered.</p>';
+  h += '<div class="btnrow"><button class="btn ghost" onclick="printStandings()">🖨 Print standings</button></div></div>';
+  return h;
+}
+
+/* ================= Referees & pay ================= */
+function viewRefs(){
+  var rt = refTotals(S);
+  var h = '<div class="card"><h2>Referees &amp; officials</h2>';
+  if(S.refs.length){
+    h += '<table><tr><th>Referee</th><th>Phone</th><th class="num">Games</th><th class="num">Fees</th><th class="num">Paid</th><th class="num">Still owed</th><th></th></tr>';
+    rt.byRef.forEach(function(r){
+      var ref = S.refs.filter(function(x){return x.id===r.refId;})[0];
+      h += '<tr><td><strong>'+esc(r.name)+'</strong></td><td>'+esc(ref&&ref.phone?ref.phone:"")+'</td><td class="num">'+r.jobs+'</td><td class="num">'+money(r.fees)+'</td><td class="num">'+money(r.paid)+'</td>'+
+        '<td class="num">'+(r.owed>0?'<span class="pill due">'+money(r.owed)+'</span>':'<span class="pill ok">Paid up</span>')+'</td>'+
+        '<td class="num"><button class="btn danger small" onclick="delRef(\''+r.refId+'\')">Delete</button></td></tr>';
+    });
+    h += '<tr class="tot"><td colspan="3">Totals</td><td class="num">'+money(rt.fees)+'</td><td class="num">'+money(rt.paidOut)+'</td><td class="num">'+money(rt.owed)+'</td><td></td></tr></table>';
+  } else h += '<p class="empty">No referees yet — add your first official below.</p>';
+  h += '<h3>Add a referee</h3><div class="frow">'+
+    '<div><label>Name</label><input id="rf_name"></div>'+
+    '<div><label>Phone (optional)</label><input id="rf_phone"></div></div>'+
+    '<div class="err" id="rf_err"></div><div class="btnrow"><button class="btn" onclick="addRef()">Add referee</button></div></div>';
+
+  h += '<div class="card"><h2>Assignments &amp; pay log</h2>';
+  if(S.refJobs.length){
+    var jobs = S.refJobs.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+    h += '<table><tr><th>Date</th><th>Referee</th><th>Assignment</th><th class="num">Fee</th><th class="num">Paid</th><th></th></tr>';
+    jobs.forEach(function(j){
+      var owed = num(j.fee) - Math.min(num(j.paidAmt), num(j.fee));
+      h += '<tr><td>'+fmtDate(j.date)+'</td><td>'+esc(refName(S,j.refId))+'</td><td>'+esc(j.desc||"")+(j.payLog?'<br><span class="muted">Payments: '+esc(j.payLog)+'</span>':'')+'</td>'+
+        '<td class="num">'+money(j.fee)+'</td>'+
+        '<td class="num">'+(owed>0?money(j.paidAmt)+' <span class="pill due">'+money(owed)+' left</span>':'<span class="pill ok">Paid</span>')+'</td>'+
+        '<td class="num"><button class="btn small" onclick="startRefJobPayment(\''+j.id+'\')">+ Payment</button> <button class="btn ghost small" onclick="editRefJob(\''+j.id+'\')">Edit</button> <button class="btn danger small" onclick="delRefJob(\''+j.id+'\')">Delete</button></td></tr>';
+    });
+    h += '</table>';
+  } else h += '<p class="empty">No assignments logged yet.</p>';
+  var pj = payJobId ? S.refJobs.filter(function(j){return j.id===payJobId;})[0] : null;
+  if(pj){
+    var left = num(pj.fee) - Math.min(num(pj.paidAmt), num(pj.fee));
+    h += '<h3>Add a payment — '+esc(refName(S,pj.refId))+' · '+esc(pj.desc||"")+'</h3>'+
+      '<p class="muted">Fee '+money(pj.fee)+' · already paid '+money(pj.paidAmt)+' · '+(left>0?money(left)+' left to pay':'fully paid')+'. The amount below is <strong>added</strong> to what\'s already recorded.</p>'+
+      '<div class="frow"><div><label>Payment amount ($)</label><input inputmode="decimal" id="rjp_amt" type="number" min="0" step="0.01" value="'+(left>0?left:"")+'"></div>'+
+      '<div><label>Date (optional)</label><input id="rjp_date" type="date" value="'+todayStr()+'"></div></div>'+
+      '<div class="err" id="rjp_err"></div><div class="btnrow"><button class="btn" onclick="applyRefJobPayment()">Add payment</button>'+
+      '<button class="btn ghost" onclick="cancelRefJobPayment()">Cancel</button></div>';
+  }
+  var ej = editRefJobId ? S.refJobs.filter(function(j){return j.id===editRefJobId;})[0] : null;
+  h += '<h3>'+(ej?"Edit assignment":"Log an assignment")+'</h3><div class="frow">'+
+    '<div><label>Date</label><input id="rj_date" type="date" value="'+(ej?ej.date:todayStr())+'"></div>'+
+    '<div><label>Referee</label><select id="rj_ref">'+refOptions(ej?ej.refId:"", true)+'</select></div>'+
+    '<div><label>Assignment</label><input id="rj_desc" placeholder="e.g. Hawks vs Wolves — center" value="'+(ej?esc(ej.desc||""):"")+'"></div>'+
+    '<div><label>Fee ($)</label><input inputmode="decimal" id="rj_fee" type="number" min="0" step="0.01" value="'+(ej?ej.fee:30)+'"></div>'+
+    '<div><label>Amount paid so far ($)</label><input inputmode="decimal" id="rj_paid" type="number" min="0" step="0.01" value="'+(ej?ej.paidAmt:0)+'"></div></div>'+
+    '<div class="err" id="rj_err"></div><div class="btnrow"><button class="btn" onclick="saveRefJob()">'+(ej?"Save changes":"Log assignment")+'</button>'+
+    (ej?'<button class="btn ghost" onclick="cancelEditRefJob()">Cancel edit</button>':"")+'</div></div>';
+  return h;
+}
+function addRef(){
+  var name = document.getElementById("rf_name").value.trim();
+  if(!name){ err("rf_err","The referee needs a name."); return; }
+  S.refs.push({ id:uid(), name:name, phone:document.getElementById("rf_phone").value.trim() });
+  save(); render();
+}
+function delRef(id){
+  if(!confirm("Delete this referee? Their assignment history stays in the log.")) return;
+  S.refs = S.refs.filter(function(r){return r.id!==id;}); save(); render();
+}
+function saveRefJob(){
+  var refId = document.getElementById("rj_ref").value;
+  var date = document.getElementById("rj_date").value;
+  var fee = num(document.getElementById("rj_fee").value);
+  var paidAmt = num(document.getElementById("rj_paid").value);
+  if(!refId){ err("rj_err","Pick the referee."); return; }
+  if(!date){ err("rj_err","Pick the assignment date."); return; }
+  if(fee < 0 || paidAmt < 0){ err("rj_err","Amounts can't be negative."); return; }
+  if(paidAmt > fee){ err("rj_err","Paid amount can't be more than the fee."); return; }
+  var desc = document.getElementById("rj_desc").value.trim();
+  if(editRefJobId){
+    var j = S.refJobs.filter(function(x){return x.id===editRefJobId;})[0];
+    if(j){ j.date = date; j.refId = refId; j.desc = desc; j.fee = fee; j.paidAmt = paidAmt; }
+    editRefJobId = null;
+  } else {
+    S.refJobs.push({ id:uid(), date:date, refId:refId, desc:desc, fee:fee, paidAmt:paidAmt });
+  }
+  save(); render();
+}
+function editRefJob(id){ editRefJobId = id; render(); }
+function cancelEditRefJob(){ editRefJobId = null; render(); }
+function startRefJobPayment(id){ payJobId = id; render(); }
+function cancelRefJobPayment(){ payJobId = null; render(); }
+function applyRefJobPayment(){
+  var j = S.refJobs.filter(function(x){return x.id===payJobId;})[0];
+  if(!j){ payJobId = null; render(); return; }
+  var amt = num(document.getElementById("rjp_amt").value);
+  if(!(amt > 0)){ err("rjp_err","Enter the payment amount — it gets added to the "+money(j.paidAmt)+" already recorded."); return; }
+  var newPaid = Math.round((num(j.paidAmt) + amt) * 100) / 100;
+  if(newPaid > num(j.fee)){ err("rjp_err","That would pay "+money(newPaid)+" on a "+money(j.fee)+" fee — only "+money(num(j.fee)-num(j.paidAmt))+" is left."); return; }
+  var date = document.getElementById("rjp_date").value;
+  j.paidAmt = newPaid;
+  if(date) j.payLog = ((j.payLog || "") ? j.payLog + " · " : "") + money(amt) + " on " + fmtDate(date);
+  payJobId = null;
+  save(); render();
+}
+function delRefJob(id){
+  if(!confirm("Delete this assignment record?")) return;
+  S.refJobs = S.refJobs.filter(function(j){return j.id!==id;});
+  if(editRefJobId===id) editRefJobId = null;
+  if(payJobId===id) payJobId = null;
+  save(); render();
+}
+
+/* ================= Money & close-out ================= */
+var INCOME_CATS = ["Sponsor","Fundraiser","Concessions","Donation","Other income"];
+var EXPENSE_CATS = ["Equipment","Field rental","Uniforms","Trophies & awards","Insurance","Snacks & supplies","Other expense"];
+function viewMoney(){
+  var sum = seasonSummary(S);
+  var h = '<div class="card"><h2>Other money (beyond registration)</h2>';
+  if(S.money.length){
+    var entries = S.money.slice().sort(function(a,b){ return a.date < b.date ? -1 : 1; });
+    h += '<table><tr><th>Date</th><th>Type</th><th>Category</th><th>Description</th><th class="num">Amount</th><th></th></tr>';
+    entries.forEach(function(m){
+      h += '<tr><td>'+fmtDate(m.date)+'</td><td><span class="pill '+(m.type==="income"?"ok":"warn")+'">'+m.type+'</span></td><td>'+esc(m.category)+'</td><td>'+esc(m.desc||"")+'</td><td class="num">'+money(m.amount)+'</td>'+
+        '<td class="num"><button class="btn danger small" onclick="delMoney(\''+m.id+'\')">Delete</button></td></tr>';
+    });
+    h += '<tr class="tot"><td colspan="4">Other income '+money(sum.money.income)+' · Other expenses '+money(sum.money.expenses)+'</td><td class="num">'+money(sum.money.net)+'</td><td></td></tr></table>';
+  } else h += '<p class="empty">No sponsor, fundraiser, concession or expense entries yet.</p>';
+  h += '<h3>Add an entry</h3><div class="frow">'+
+    '<div><label>Date</label><input id="mn_date" type="date" value="'+todayStr()+'"></div>'+
+    '<div><label>Type</label><select id="mn_type" onchange="syncMoneyCats()"><option value="income">Income</option><option value="expense">Expense</option></select></div>'+
+    '<div><label>Category</label><select id="mn_cat">'+INCOME_CATS.map(function(c){return '<option>'+c+'</option>';}).join("")+'</select></div>'+
+    '<div><label>Description</label><input id="mn_desc" placeholder="e.g. Riverbend Bank — season sponsor"></div>'+
+    '<div><label>Amount ($)</label><input inputmode="decimal" id="mn_amt" type="number" min="0" step="0.01" value="0"></div></div>'+
+    '<div class="err" id="mn_err"></div><div class="btnrow"><button class="btn" onclick="addMoney()">Add entry</button></div></div>';
+
+  h += '<div class="card"><h2>Season close-out summary</h2><table>'+
+    '<tr><td>Registration fees charged</td><td class="num">'+money(sum.reg.charged)+'</td></tr>'+
+    '<tr><td>Registration collected</td><td class="num">'+money(sum.reg.collected)+'</td></tr>'+
+    '<tr><td>Registration still owed ('+sum.reg.unpaidCount+' player'+(sum.reg.unpaidCount===1?"":"s")+')</td><td class="num">'+money(sum.reg.outstanding)+'</td></tr>'+
+    '<tr><td>Other income (sponsors, fundraisers, concessions)</td><td class="num">'+money(sum.money.income)+'</td></tr>'+
+    '<tr><td>Other expenses</td><td class="num">−'+money(sum.money.expenses)+'</td></tr>'+
+    '<tr><td>Referee fees (total)</td><td class="num">'+money(sum.refs.fees)+'</td></tr>'+
+    '<tr><td>Referee pay already paid out</td><td class="num">−'+money(sum.refs.paidOut)+'</td></tr>'+
+    '<tr><td>Referee pay still owed</td><td class="num">'+money(sum.refs.owed)+'</td></tr>'+
+    '<tr><td><strong>Cash in</strong> (registration collected + other income)</td><td class="num"><strong>'+money(sum.cashIn)+'</strong></td></tr>'+
+    '<tr><td><strong>Cash out</strong> (expenses + referee pay paid)</td><td class="num"><strong>−'+money(sum.cashOut)+'</strong></td></tr>'+
+    '<tr class="tot"><td>Net position (cash net + registration owed − referee owed)</td><td class="num">'+money(sum.netPosition)+'</td></tr></table>'+
+    '<p class="muted">Print this for the board at season\'s end. Registration amounts recorded as paid beyond a player\'s fee show as a credit on that player\'s row in Registration.</p>'+
+    '<div class="btnrow"><button class="btn ghost" onclick="printCloseout()">🖨 Print close-out summary</button></div></div>';
+  return h;
+}
+function syncMoneyCats(){
+  var type = document.getElementById("mn_type").value;
+  var cats = type==="income" ? INCOME_CATS : EXPENSE_CATS;
+  document.getElementById("mn_cat").innerHTML = cats.map(function(c){return '<option>'+c+'</option>';}).join("");
+}
+function addMoney(){
+  var date = document.getElementById("mn_date").value;
+  var amt = num(document.getElementById("mn_amt").value);
+  if(!date){ err("mn_err","Pick a date."); return; }
+  if(amt <= 0){ err("mn_err","Enter an amount above zero."); return; }
+  S.money.push({ id:uid(), date:date, type:document.getElementById("mn_type").value,
+    category:document.getElementById("mn_cat").value,
+    desc:document.getElementById("mn_desc").value.trim(), amount:amt });
+  save(); render();
+}
+function delMoney(id){
+  if(!confirm("Delete this money entry?")) return;
+  S.money = S.money.filter(function(m){return m.id!==id;}); save(); render();
+}
+
+/* ================= Settings & help ================= */
+function viewSettings(){
+  var st = S.settings;
+  var h = '<div class="card"><h2>League settings</h2><div class="frow">'+
+    '<div><label>League name</label><input id="st_name" value="'+esc(st.leagueName||"")+'"></div>'+
+    '<div><label>Sport</label><input id="st_sport" value="'+esc(st.sport||"")+'" placeholder="Soccer, baseball, basketball…"></div>'+
+    '<div><label>Season</label><input id="st_season" value="'+esc(st.season||"")+'" placeholder="Spring 2026"></div>'+
+    '<div><label>Default registration fee ($)</label><input inputmode="decimal" id="st_fee" type="number" min="0" step="0.01" value="'+st.feeDefault+'"></div>'+
+    '<div><label>Points for a win</label><input inputmode="decimal" id="st_pw" type="number" min="0" step="1" value="'+st.ptsWin+'"></div>'+
+    '<div><label>Points for a tie</label><input inputmode="decimal" id="st_pt" type="number" min="0" step="1" value="'+st.ptsTie+'"></div>'+
+    '<div><label>Points for a loss</label><input inputmode="decimal" id="st_pl" type="number" min="0" step="1" value="'+st.ptsLoss+'"></div></div>'+
+    '<div class="btnrow"><button class="btn" onclick="saveSettings()">Save settings</button></div></div>';
+
+  h += '<div class="card"><h2>Your data</h2>'+
+    '<p class="muted">Everything is stored only in this browser on this device. Export a backup file regularly and keep it somewhere safe — if the browser\'s data is cleared without a backup, the book can\'t be recovered.</p>'+
+    '<div class="btnrow"><button class="btn" onclick="exportData()">⬇ Export backup (JSON)</button>'+
+    '<button class="btn ghost" onclick="document.getElementById(\'importFile\').click()">⬆ Import backup</button>'+
+    '<input type="file" id="importFile" accept=".json,application/json" style="display:none" onchange="importData(this)"></div>'+
+    '<div class="err" id="io_err"></div>'+
+    '<h3>Start over</h3><div class="btnrow">'+
+    '<button class="btn ghost" onclick="clearDemo()">Remove demo data only</button>'+
+    '<button class="btn danger" onclick="clearAll()">Erase everything</button></div></div>';
+
+  h += '<div class="card"><h2>Help &amp; honest limits</h2>'+
+    '<p><strong>What LeagueBook is:</strong> the admin and money book for one league or club, run by one person (or one person at a time) on one device. Registration, schedule, standings, referee pay, sponsor/concession money, and a board-ready close-out.</p>'+
+    '<p><strong>What it is not:</strong> it does <em>not</em> message parents or players, run a public registration page, or take card payments — fees and ref pay are <em>recorded</em> here, collected and paid however your league already does it. There is no live multi-device sync; that\'s the trade that removes the subscription.</p>'+
+    '<p><strong>Standings:</strong> computed from games marked Played (or Forfeit). A forfeit with no score entered counts as a 1–0 win for the other team. Tiebreakers: points, then score difference, then total scored, then team name.</p>'+
+    '<p><strong>Waivers:</strong> the checkbox records that a signed waiver/release is on file with the league — the signed forms themselves stay in your league\'s files.</p>'+
+    '<p><strong>Demo data:</strong> the app arrives with a sample season (Riverbend Youth Soccer) so you can see everything working. Remove it with "Remove demo data only" above — anything you added yourself stays.</p></div>';
+  return h;
+}
+function saveSettings(){
+  S.settings.leagueName = document.getElementById("st_name").value.trim();
+  S.settings.sport = document.getElementById("st_sport").value.trim();
+  S.settings.season = document.getElementById("st_season").value.trim();
+  S.settings.feeDefault = Math.max(0, num(document.getElementById("st_fee").value));
+  S.settings.ptsWin = Math.max(0, num(document.getElementById("st_pw").value));
+  S.settings.ptsTie = Math.max(0, num(document.getElementById("st_pt").value));
+  S.settings.ptsLoss = Math.max(0, num(document.getElementById("st_pl").value));
+  save(); render();
+}
+function exportData(){
+  var blob = new Blob([JSON.stringify(S, null, 2)], { type:"application/json" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "leaguebook-backup.json";
+  document.body.appendChild(a); a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+function importData(input){
+  var f = input.files && input.files[0]; if(!f) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    try{
+      var st = JSON.parse(reader.result);
+      if(!st || !st.settings || !Array.isArray(st.teams) || !Array.isArray(st.players) || !Array.isArray(st.games))
+        throw new Error("shape");
+      ["refs","refJobs","money"].forEach(function(k){ if(!Array.isArray(st[k])) st[k] = []; });
+      if(!confirm("Replace the current book with this backup?")) return;
+      S = st; save(); render();
+    }catch(e){ err("io_err","That file doesn't look like a LeagueBook backup — nothing was changed."); }
+  };
+  reader.readAsText(f);
+  input.value = "";
+}
+function clearDemo(){
+  ["teams","players","games","refs","refJobs","money"].forEach(function(k){
+    S[k] = S[k].filter(function(r){ return !r.demo; });
+  });
+  if(S.settings.leagueName === "Riverbend Youth Soccer League") S.settings = defaultSettings();
+  editPlayerId = null; editGameId = null; editTeamId = null; editRefJobId = null; payPlayerId = null; payJobId = null;
+  save(); render();
+}
+function clearAll(){
+  if(!confirm("Erase ALL league data and start empty? Export a backup first if you might want it back.")) return;
+  S = blankState(); editPlayerId = null; editGameId = null; editTeamId = null; editRefJobId = null; payPlayerId = null; payJobId = null; save(); render();
+}
+
+/* ================= Print views ================= */
+function printHead(title){
+  return '<h1>'+esc(S.settings.leagueName || "League")+(S.settings.season ? " — "+esc(S.settings.season) : "")+'</h1>'+
+    '<div class="muted">'+esc(title)+' · Printed from LeagueBook</div>';
+}
+function printSchedule(){
+  var pa = document.getElementById("printArea");
+  var games = S.games.slice().sort(function(a,b){ return (a.date+a.time) < (b.date+b.time) ? -1 : 1; });
+  var h = printHead("Season schedule");
+  if(!games.length) h += '<p>No games scheduled.</p>';
+  else {
+    h += '<table><tr><th>Date</th><th>Time</th><th>Home</th><th>Away</th><th>Field</th><th>Score / Status</th></tr>';
+    games.forEach(function(g){
+      var r = gameResult(g,S);
+      h += '<tr><td>'+fmtDate(g.date)+'</td><td>'+esc(g.time||"")+'</td><td>'+esc(teamName(S,g.homeId))+'</td><td>'+esc(teamName(S,g.awayId))+'</td><td>'+esc(g.location||"")+'</td><td>'+(r ? r.hs+" – "+r.as : STATUS_LABEL[g.status])+'</td></tr>';
+    });
+    h += '</table>';
+  }
+  pa.innerHTML = h; window.print();
+}
+function printStandings(){
+  var pa = document.getElementById("printArea");
+  var rows = computeStandings(S);
+  var h = printHead("Standings");
+  h += '<table><tr><th>#</th><th>Team</th><th class="num">GP</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">For</th><th class="num">Against</th><th class="num">Diff</th><th class="num">Pts</th></tr>';
+  rows.forEach(function(r,i){
+    h += '<tr><td>'+(i+1)+'</td><td>'+esc(r.name)+'</td><td class="num">'+r.gp+'</td><td class="num">'+r.w+'</td><td class="num">'+r.l+'</td><td class="num">'+r.t+'</td><td class="num">'+r.pf+'</td><td class="num">'+r.pa+'</td><td class="num">'+(r.diff>0?"+":"")+r.diff+'</td><td class="num">'+r.pts+'</td></tr>';
+  });
+  h += '</table>';
+  pa.innerHTML = h; window.print();
+}
+function printDues(){
+  var pa = document.getElementById("printArea");
+  var owing = S.players.filter(function(p){ return playerBalance(p) > 0; })
+    .sort(function(a,b){ return playerBalance(b) - playerBalance(a); });
+  var h = printHead("Registration still owed");
+  if(!owing.length) h += '<p>Every player is paid up. 🎉</p>';
+  else {
+    h += '<table><tr><th>Player</th><th>Team</th><th>Contact</th><th class="num">Fee</th><th class="num">Paid</th><th class="num">Balance owed</th></tr>';
+    var tot = 0;
+    owing.forEach(function(p){
+      var b = playerBalance(p); tot += b;
+      h += '<tr><td>'+esc(p.name)+'</td><td>'+esc(teamName(S,p.teamId))+'</td><td>'+esc(p.contact||"")+(p.phone?" · "+esc(p.phone):"")+'</td><td class="num">'+money(p.fee)+'</td><td class="num">'+money(p.paid)+'</td><td class="num">'+money(b)+'</td></tr>';
+    });
+    h += '<tr><td colspan="5"><strong>Total outstanding</strong></td><td class="num"><strong>'+money(tot)+'</strong></td></tr></table>';
+  }
+  pa.innerHTML = h; window.print();
+}
+function printCloseout(){
+  var pa = document.getElementById("printArea");
+  var sum = seasonSummary(S);
+  var h = printHead("Season close-out summary");
+  h += '<table>'+
+    '<tr><td>Registration fees charged</td><td class="num">'+money(sum.reg.charged)+'</td></tr>'+
+    '<tr><td>Registration collected</td><td class="num">'+money(sum.reg.collected)+'</td></tr>'+
+    '<tr><td>Registration still owed</td><td class="num">'+money(sum.reg.outstanding)+'</td></tr>'+
+    '<tr><td>Other income</td><td class="num">'+money(sum.money.income)+'</td></tr>'+
+    '<tr><td>Other expenses</td><td class="num">−'+money(sum.money.expenses)+'</td></tr>'+
+    '<tr><td>Referee fees total</td><td class="num">'+money(sum.refs.fees)+'</td></tr>'+
+    '<tr><td>Referee pay paid out</td><td class="num">−'+money(sum.refs.paidOut)+'</td></tr>'+
+    '<tr><td>Referee pay still owed</td><td class="num">'+money(sum.refs.owed)+'</td></tr>'+
+    '<tr><td><strong>Cash in</strong></td><td class="num"><strong>'+money(sum.cashIn)+'</strong></td></tr>'+
+    '<tr><td><strong>Cash out</strong></td><td class="num"><strong>−'+money(sum.cashOut)+'</strong></td></tr>'+
+    '<tr><td><strong>Net position</strong> (cash net + registration owed − referee owed)</td><td class="num"><strong>'+money(sum.netPosition)+'</strong></td></tr></table>';
+  h += '<h2>Final standings</h2><table><tr><th>#</th><th>Team</th><th class="num">W</th><th class="num">L</th><th class="num">T</th><th class="num">Pts</th></tr>';
+  computeStandings(S).forEach(function(r,i){
+    h += '<tr><td>'+(i+1)+'</td><td>'+esc(r.name)+'</td><td class="num">'+r.w+'</td><td class="num">'+r.l+'</td><td class="num">'+r.t+'</td><td class="num">'+r.pts+'</td></tr>';
+  });
+  h += '</table>';
+  pa.innerHTML = h; window.print();
+}
+
+/* ================= init ================= */
+load();
+render();
+</script>
+
+<style id="wwLegalCss">
+#wwLegalOverlay{position:fixed;inset:0;z-index:99990;background:rgba(10,12,16,.72);display:flex;align-items:flex-start;justify-content:center;overflow-y:auto;padding:18px 12px;box-sizing:border-box}
+#wwLegalOverlay[hidden]{display:none}
+.ww-card{background:#fff;color:#16181d;max-width:560px;width:100%;border-radius:14px;padding:22px 20px;box-sizing:border-box;box-shadow:0 12px 40px rgba(0,0,0,.4)}
+.ww-appname{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#5b6472;font-weight:700}
+.ww-card h2{margin:6px 0 10px;font-size:24px}
+.ww-sum{font-size:17px;line-height:1.45;font-weight:600;margin:10px 0}
+.ww-follow{color:#444c58;font-size:14px;line-height:1.45}
+.ww-updated{background:#fff4d6;border:1px solid #e3c566;color:#5c4a00;border-radius:8px;padding:8px 10px;font-size:14px}
+.ww-btn{display:block;width:100%;min-height:48px;margin:10px 0 0;padding:12px 14px;font-size:16px;border-radius:10px;border:1px solid #9aa3af;background:#f2f4f7;color:#16181d;cursor:pointer;box-sizing:border-box}
+.ww-btn.ww-primary{background:#14532d;border-color:#14532d;color:#fff;font-weight:700;min-height:52px}
+.ww-btn.ww-primary:disabled{opacity:.45;cursor:not-allowed}
+.ww-check{display:flex;gap:10px;align-items:flex-start;margin:14px 0 2px;font-size:15px;line-height:1.4;color:#16181d;cursor:pointer}
+.ww-check input{width:22px;height:22px;flex:0 0 auto;margin:1px 0 0;accent-color:#14532d;cursor:pointer}
+#wwLegalPanel{position:fixed;inset:0;z-index:99995;background:#fff;color:#16181d;overflow-y:auto;box-sizing:border-box}
+#wwLegalPanel[hidden]{display:none}
+.ww-panel-inner{max-width:720px;margin:0 auto;padding:16px 18px 40px;box-sizing:border-box;line-height:1.55}
+.ww-panel-inner h3{margin-top:26px}
+.ww-panel-inner h4{margin-top:20px}
+.ww-accept{background:#eef7ee;border:1px solid #b9d8b9;border-radius:8px;padding:10px 12px}
+.ww-seller{margin-top:28px;padding-top:12px;border-top:1px solid #ddd;color:#444c58}
+#wwLegalClose{min-height:48px;padding:10px 16px;font-size:16px;border-radius:10px;border:1px solid #9aa3af;background:#f2f4f7;color:#16181d;cursor:pointer}
+[data-ww-legal-card]{border:1px solid #9aa3af;border-radius:12px;padding:14px;margin:14px 0;background:rgba(127,127,127,.06)}
+[data-ww-legal-btn]{min-height:48px;padding:10px 16px;font-size:16px;border-radius:10px;border:1px solid #14532d;background:#14532d;color:#fff;font-weight:700;cursor:pointer;width:100%}
+@media print{#wwLegalOverlay,#wwLegalPanel,[data-ww-legal-card]{display:none!important}}
+</style>
+
+<!-- ===== White Wolf Legal Pattern v1.0 ===== -->
+<div id="wwLegalOverlay" hidden>
+  <div class="ww-card" role="dialog" aria-modal="true" aria-labelledby="wwLegalTitle">
+    <div class="ww-appname">LeagueBook</div>
+    <h2 id="wwLegalTitle">Terms of Use</h2>
+    <p class="ww-updated" id="wwUpdatedNote" hidden>Our terms were updated (v1.0).</p>
+    <p class="ww-sum">Your data stays on your device.<br>Estimates are aids, not guarantees.<br>You&#39;re responsible for checking outputs before you rely on them.</p>
+    <p class="ww-follow">The full Terms and Disclaimer are one tap away, now and any time in Settings &#8594; Legal.</p>
+    <button type="button" class="ww-btn" id="wwReadTerms">Read the full Terms</button>
+    
+    <label class="ww-check"><input type="checkbox" id="wwAgreeCheck"> <span>I have read and I agree to the Terms of Use</span></label>
+    <button type="button" class="ww-btn ww-primary" id="wwAgree" disabled>I Agree</button>
+  </div>
+</div>
+<div id="wwLegalPanel" hidden>
+  <div class="ww-panel-inner">
+    <button type="button" id="wwLegalClose">&#8592; Back</button>
+    <h2>Legal</h2>
+    <p class="ww-accept" id="wwAcceptLine">You have not recorded acceptance of the Terms yet.</p>
+    <h3>Terms of Use</h3>
+    <p><strong>Version 1.0 (DRAFT — pending attorney review)</strong> <strong>Seller: White Wolf Tree Service LLC, selling digital products under the name "White Wolf Digital"</strong> <strong>Contact: whitewolfoklahoma@gmail.com</strong></p>
+<hr>
+<h4>1. What you're buying</h4>
+<p>Our apps (including ForgeFit AI, ForgeKitchen, TreeBid Pro, SnowBid, WashPrice Pro, RoofSquares, JobProfit Tracker, PastureLedger, and the other titles sold under White Wolf Digital) are single-file software tools. When you buy one, you are buying a <strong>license to use the file</strong>, not ownership of the software itself.</p>
+<h4>2. Your license</h4>
+<ul>
+<li>You may use the app for your own personal or business work.</li>
+<li>You may open it on your own devices (phone, tablet, computer) and move your</li>
+</ul>
+<p>own data between them using the app's built-in backup/export tools.</p>
+<ul>
+<li>You may <strong>not</strong> resell, redistribute, give away, upload, or share the app</li>
+</ul>
+<p>file (or a copy of it) with anyone else — including posting it online, bundling it with other products, or selling access to it.</p>
+<ul>
+<li>You may <strong>not</strong> claim the app as your own work, remove its branding or</li>
+</ul>
+<p>notices, or use it to build a competing product for resale.</p>
+<ul>
+<li>One purchase = one buyer. A business purchase covers the buyer and their</li>
+</ul>
+<p>own employees using it for that business's work; it does not cover other businesses.</p>
+<h4>3. Your data stays yours — and stays on your device</h4>
+<ul>
+<li>The current versions of our apps run <strong>entirely on your device</strong>. They have</li>
+</ul>
+<p>no accounts, no sign-in, no analytics, and they collect, transmit, and store <strong>none</strong> of your information on any server. We never see your data.</p>
+<ul>
+<li>Your records are stored in your browser/app storage on your device. **You</li>
+</ul>
+<p>are responsible for backing them up** using the app's export tools. If you clear your browser data, lose your device, or uninstall the app, your records may be permanently lost, and we cannot recover them — we never had a copy.</p>
+<ul>
+<li>Files you export (backups, quotes, PDFs) are under your control. Where you</li>
+</ul>
+<p>store or send them is up to you.</p>
+<h4>4. Estimates are tools, not guarantees</h4>
+<p>Every number our apps produce — bids, prices, costs, calorie targets, projections, schedules, totals — is an <strong>estimate generated from the information you enter and the settings you choose</strong>. Outputs are aids for your own judgment, not guarantees of price, profit, outcome, or result. You are responsible for checking any output before relying on it (see also the disclaimer that applies to your app: Health Disclaimer for fitness/nutrition apps, Estimator Disclaimer for contractor tools). If an input is wrong, the output will be wrong.</p>
+<h4>5. Acceptable use</h4>
+<p>Don't use the apps to break the law, infringe anyone's rights, or misrepresent quotes, invoices, or records to your own customers. For the fitness apps, the guardrails in the app (healthy-rate limits, calorie floor) are part of the product — don't treat the app as a way around them.</p>
+<h4>6. Provided "as is"</h4>
+<p>The apps are provided <strong>"as is" and "as available," without warranties of any kind</strong>, express or implied — including merchantability, fitness for a particular purpose, accuracy of calculations, and uninterrupted or error-free operation — to the maximum extent allowed by law. Software has bugs; browsers change; we work to fix problems but do not promise any app is error-free or will work on every device or browser forever.</p>
+<h4>7. Limitation of liability</h4>
+<p>To the maximum extent allowed by law:</p>
+<ul>
+<li>We are **not liable for indirect, incidental, special, or consequential</li>
+</ul>
+<p>damages** — including lost profits, lost or mispriced jobs, lost data, or business interruption — arising from use of the apps.</p>
+<ul>
+<li>Our total liability for any claim connected to an app is limited to the</li>
+</ul>
+<p><strong>amount you paid for that app</strong>.</p>
+<ul>
+<li>Nothing in these terms limits liability that cannot legally be limited.</li>
+</ul>
+<h4>8. Refunds</h4>
+<p>Refunds are handled <strong>by the storefront you bought from, under that storefront's policy</strong> — Gumroad's refund policy for Gumroad purchases, and Google Play's refund policy for Play purchases. These terms do not add to, replace, or override the storefront's refund rules. If a file is defective and won't open, contact us at whitewolfoklahoma@gmail.com and we'll fix or replace the file.</p>
+<h4>9. Updates and changes to these terms</h4>
+<ul>
+<li>We may release updated versions of an app. Updates may add, change, or</li>
+</ul>
+<p>remove features.</p>
+<ul>
+<li>We may update these terms. The version you agreed to is recorded in the</li>
+</ul>
+<p>app (version number and date) at first-run acceptance. If terms change, the app may ask you to accept the new version once on next open. Updated terms apply going forward, not retroactively.</p>
+<ul>
+<li>If you don't agree to an updated version of the terms, stop using the app.</li>
+</ul>
+<h4>10. Governing law</h4>
+<p>These terms are governed by the laws of the <strong>State of Oklahoma</strong>, USA. (Attorney to confirm governing law and venue before publication.)</p>
+<h4>11. Contact</h4>
+<p>White Wolf Tree Service LLC (White Wolf Digital) — whitewolfoklahoma@gmail.com.</p>
+<hr>
+<h4>CONNECTED FEATURES — takes effect only when these features ship</h4>
+<p><em>The sections below apply only to future connected features (device sync via Health Connect, AI voice logging, and the AI Goal Preview in ForgeFit). They do not apply to the current offline versions, which never transmit data.</em></p>
+<ul>
+<li><strong>Opt-in only.</strong> Connected features are off by default. Each one asks for</li>
+</ul>
+<p>your separate, explicit consent — on its own consent screen, in plain language — before anything leaves your device. Declining never disables the app's offline features.</p>
+<ul>
+<li><strong>What gets sent.</strong> Only what the consent screen names, only when you use</li>
+</ul>
+<p>the feature: for example, a meal description (text, or audio only if cloud transcription is on) for AI voice logging, or the single photo you choose for an AI Goal Preview.</p>
+<ul>
+<li><strong>No retention by us.</strong> Our relay service passes your request to the named</li>
+</ul>
+<p>AI provider and keeps nothing — no copies of your photos, audio, transcripts, or entries are stored on our servers. Provider handling is described on the consent screen and in the Privacy Policy.</p>
+<ul>
+<li><strong>Health data stays on the device.</strong> Device sync (Health Connect) reads</li>
+</ul>
+<p>your health data on your phone and stores it in the app on your phone. It is not uploaded to us.</p>
+<ul>
+<li><strong>Allowances.</strong> Some connected features run on third-party AI services we</li>
+</ul>
+<p>pay for per use, so they may include a monthly allowance described in the app (for example, a set number of AI previews or voice entries per month), with optional additional credits. Allowances and pricing will be shown in the app before you use the feature; they are not a subscription unless the app says so in plain words.</p>
+<ul>
+<li><strong>Permissions.</strong> Connected features may request device permissions (such</li>
+</ul>
+<p>as Health Connect access or the microphone) at the moment you first use them. You can revoke permissions any time in your device settings; the related feature will simply stop working.</p>
+    
+    <h3>Privacy</h3>
+    <p>This app has no accounts and collects no data. Everything you enter is stored only on your device, in your browser/app storage, and is never uploaded, transmitted, or shared. We never see your data. Files you export (backups, quotes, PDFs) are under your control &mdash; store and send them only where you choose. If you clear your browser data, lose your device, or uninstall the app, your records may be permanently lost, so export backups regularly.</p>
+    <p class="ww-seller">Sold by White Wolf Tree Service LLC (White Wolf Digital) &mdash; whitewolfoklahoma@gmail.com</p>
+  </div>
+</div>
+
+<script>
+/* ===== White Wolf Legal Pattern v1.0 ===== */
+(function(){
+"use strict";
+var TERMS_VERSION = "1.0";
+var WW_KEY = "leaguebook_v1";
+var WW_HAS_DISC = false;
+var WWREC = null;
+function wwValid(r){ return r && typeof r === "object" && typeof r.termsVersion === "string" && !!r.termsVersion; }
+function wwVerCmp(a,b){ var pa=String(a).split("."), pb=String(b).split("."); for(var i=0;i<3;i++){ var x=parseInt(pa[i]||"0",10)||0, y=parseInt(pb[i]||"0",10)||0; if(x<y) return -1; if(x>y) return 1; } return 0; }
+function wwReadStored(){ try{ var raw = localStorage.getItem(WW_KEY); if(!raw) return null; var o = JSON.parse(raw); return (o && typeof o === "object") ? o : null; }catch(e){ return null; } }
+var _wwStored = wwReadStored();
+if(_wwStored && wwValid(_wwStored.legal)) WWREC = _wwStored.legal;
+try{
+  var _wwOrigSet = localStorage.setItem.bind(localStorage);
+  localStorage.setItem = function(k,v){
+    if(k === WW_KEY && typeof v === "string"){
+      try{ var o = JSON.parse(v); if(o && typeof o === "object" && !Array.isArray(o)){
+        if(wwValid(o.legal)){ WWREC = o.legal; }
+        else if(WWREC){ o.legal = WWREC; v = JSON.stringify(o); }
+      } }catch(e){}
+    }
+    return _wwOrigSet(k,v);
+  };
+}catch(e){}
+function wwSyncState(){ try{ if(typeof S !== "undefined" && S && typeof S === "object" && WWREC) S.legal = WWREC; }catch(e){} }
+function wwPersist(){
+  wwSyncState();
+  try{ save() }catch(e){}
+  try{ var o = wwReadStored(); if(o){ o.legal = WWREC; localStorage.setItem(WW_KEY, JSON.stringify(o)); } }catch(e){}
+}
+function wwAcceptLine(){
+  var el = document.getElementById("wwAcceptLine"); if(!el) return;
+  if(WWREC && WWREC.acceptedDate){ el.textContent = "You agreed to Terms v" + WWREC.termsVersion + " on " + WWREC.acceptedDate + "."; }
+  else { el.textContent = "You have not recorded acceptance of the Terms yet."; }
+}
+function wwOpenLegal(){ var p = document.getElementById("wwLegalPanel"); if(p){ p.hidden = false; p.scrollTop = 0; } wwAcceptLine(); }
+function wwCloseLegal(){ var p = document.getElementById("wwLegalPanel"); if(p) p.hidden = true; }
+function wwInit(){
+  var overlay = document.getElementById("wwLegalOverlay");
+  var agree = document.getElementById("wwAgree");
+  var rt = document.getElementById("wwReadTerms");
+  var rd = document.getElementById("wwReadDisc");
+  var close = document.getElementById("wwLegalClose");
+  if(rt) rt.addEventListener("click", wwOpenLegal);
+  if(rd) rd.addEventListener("click", wwOpenLegal);
+  if(close) close.addEventListener("click", wwCloseLegal);
+  var agreeCheck = document.getElementById("wwAgreeCheck");
+  if(agree) agree.disabled = !(agreeCheck && agreeCheck.checked);
+  if(agreeCheck && agree) agreeCheck.addEventListener("change", function(){ agree.disabled = !agreeCheck.checked; });
+  if(agree) agree.addEventListener("click", function(){
+    if(agree.disabled || !(agreeCheck && agreeCheck.checked)) return;
+    WWREC = { termsVersion: TERMS_VERSION, acceptedDate: new Date().toISOString().slice(0,10), disclaimerShown: WW_HAS_DISC };
+    wwPersist(); wwAcceptLine();
+    if(overlay) overlay.hidden = true;
+  });
+  wwSyncState(); wwAcceptLine();
+  if(!WWREC || wwVerCmp(WWREC.termsVersion, TERMS_VERSION) < 0){
+    if(WWREC){ var note = document.getElementById("wwUpdatedNote"); if(note) note.hidden = false; }
+    if(overlay) overlay.hidden = false;
+  }
+  var anchors = [{sel:"#app",marker:"Backup"}];
+  function wwEnsureBtn(){
+    for(var i=0;i<anchors.length;i++){
+      var a = anchors[i]; var el = document.querySelector(a.sel); if(!el) continue;
+      if(el.querySelector("[data-ww-legal-btn]")) continue;
+      var txt = el.textContent || "";
+      if(a.marker){ if(txt.toLowerCase().indexOf(a.marker.toLowerCase()) < 0) continue; }
+      else if(txt.replace(/\s+/g,"").length < 40) continue;
+      var card = document.createElement("div");
+      card.setAttribute("data-ww-legal-card","");
+      card.innerHTML = "<h3 style=\"margin:0 0 6px\">Legal</h3><p style=\"margin:0 0 10px\">Terms of Use, disclaimer and privacy for this app.</p>";
+      var b = document.createElement("button");
+      b.type = "button"; b.setAttribute("data-ww-legal-btn",""); b.textContent = "View Legal \u2014 Terms, Disclaimer & Privacy";
+      b.addEventListener("click", wwOpenLegal);
+      card.appendChild(b); el.appendChild(card);
+    }
+  }
+  wwEnsureBtn();
+  setInterval(wwEnsureBtn, 700);
+}
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", wwInit); else wwInit();
+})();
+</script>
+</body>
+</html>
